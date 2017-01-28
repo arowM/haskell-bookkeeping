@@ -11,6 +11,7 @@ module Bookkeeping
   , CategoryType
   , year
   , month
+  , activity
   ) where
 
 import Control.Monad.State (State, execState, put)
@@ -23,6 +24,7 @@ import GHC.Generics (Generic)
 type Transactions = State (DList Transaction) ()
 type YearTransactions = State (DList (Year -> Transaction)) ()
 type MonthTransactions = State (DList (Month -> Year -> Transaction)) ()
+type DayTransactions = State (DList (Day -> Text -> Month -> Year -> Transaction)) ()
 
 {-| A type representing a transaction.
  -}
@@ -78,6 +80,13 @@ month :: Month -> MonthTransactions -> YearTransactions
 month m mts = put $ fmap ($ m) fs
   where
     fs = execState mts mempty
+
+{-| Convert from `DayTransactions` to `MonthTransactions`.
+-}
+activity :: Day -> Text -> DayTransactions -> MonthTransactions
+activity d desc dts = put $ fmap (($ desc) . ($ d)) fs
+  where
+    fs = execState dts mempty
 
 -- ====================
 -- = Orphan instances =
