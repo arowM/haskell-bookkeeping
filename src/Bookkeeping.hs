@@ -1,5 +1,8 @@
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Bookkeeping
   ( Transactions
@@ -9,7 +12,9 @@ module Bookkeeping
   ) where
 
 import Control.Monad.State (State)
-import Data.Text (Text)
+import Data.Default (Default(def))
+import Data.Text (Text, pack)
+import GHC.Generics (Generic)
 
 type Transactions =
   State Transaction ()
@@ -22,13 +27,13 @@ data Transaction = Transaction
   , tSubDesc     :: Text
   , tCategory    :: Text
   , tAmount      :: Int
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
 
 
 data Category = Category
   { cName :: Text
   , cType :: CategoryType
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
 
 
 data CategoryType
@@ -38,3 +43,14 @@ data CategoryType
   | Revenue
   | Expenses
   deriving (Show, Read, Ord, Eq, Enum)
+
+instance Default CategoryType where
+  def = Assets
+
+
+-- ====================
+-- = Orphan instances =
+-- ====================
+
+instance Default Text where
+  def = pack (def :: String)
