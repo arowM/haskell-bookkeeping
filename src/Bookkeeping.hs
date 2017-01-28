@@ -33,7 +33,6 @@ data Transaction = Transaction
   , tMonth :: Month
   , tDay :: Day
   , tDescription :: Text
-  , tSubDesc :: Text
   , tCategory :: Text
   , tAmount :: Int
   } deriving (Show, Read, Ord, Eq, Default, Generic)
