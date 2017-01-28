@@ -23,14 +23,21 @@ type Transactions = State (DList Transaction) ()
 {-| A type representing a transaction.
  -}
 data Transaction = Transaction
-  { tYear :: Int
-  , tMonth :: Int
-  , tDate :: Int
+  { tYear :: Year
+  , tMonth :: Month
+  , tDay :: Day
   , tDescription :: Text
   , tSubDesc :: Text
   , tCategory :: Text
   , tAmount :: Int
   } deriving (Show, Read, Ord, Eq, Default, Generic)
+
+newtype Year = Year { unYear :: Int }
+  deriving (Show, Read, Ord, Eq, Default, Generic)
+newtype Month = Month { unMonth :: Int }
+  deriving (Show, Read, Ord, Eq, Default, Generic)
+newtype Day = Day { unDay :: Int }
+  deriving (Show, Read, Ord, Eq, Default, Generic)
 
 {-| A type representing an accounts title.
  -}
