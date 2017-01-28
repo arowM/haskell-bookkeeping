@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
 
@@ -47,15 +48,15 @@ data Transaction = Transaction
 
 newtype Year = Year
   { unYear :: Int
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Num)
 
 newtype Month = Month
   { unMonth :: Int
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Num)
 
 newtype Day = Day
   { unDay :: Int
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Num)
 
 newtype Description = Description
   { unDescription :: Text
@@ -70,7 +71,7 @@ instance Monoid Description where
 
 newtype Amount = Amount
   { unAmount :: Int
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Num)
 
 {-| A type representing an accounts title.
  -}
