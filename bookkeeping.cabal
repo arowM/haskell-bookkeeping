@@ -9,7 +9,7 @@ license-file:        LICENSE
 author:              Kadzuya Okamoto
 maintainer:          arow.okamoto+github@gmail.com
 copyright:           2017 Kadzuya Okamoto
-category:            Web
+category:            Business
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
@@ -17,7 +17,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Lib
-                     , Bookkeeping
+                     , Business.Bookkeeping
   build-depends:       base >= 4.9
                      , dlist >= 0.8.0.2
                      , mtl >= 2.2.1

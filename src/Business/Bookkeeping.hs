@@ -3,7 +3,7 @@
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
 
-module Bookkeeping
+module Business.Bookkeeping
   ( Transactions
   , Transaction
   , Year(..)
