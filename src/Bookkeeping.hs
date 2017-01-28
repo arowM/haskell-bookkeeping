@@ -23,8 +23,8 @@ data Transaction = Transaction
 
 
 data Category = Category
-  { name :: Text
-  , categoryType :: CategoryType
+  { cName :: Text
+  , cType :: CategoryType
   } deriving (Show, Read, Ord, Eq, Enum)
 
 
