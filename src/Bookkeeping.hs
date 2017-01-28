@@ -13,10 +13,12 @@ module Bookkeeping
 
 import Control.Monad.State (State)
 import Data.Default (Default(def))
+import Data.DList (DList)
+import qualified Data.DList as DList
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)
 
-type Transactions = State Transaction ()
+type Transactions = State (DList Transaction) ()
 
 {-| A type representing a transaction.
  -}
