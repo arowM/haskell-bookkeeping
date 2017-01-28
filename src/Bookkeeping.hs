@@ -18,6 +18,8 @@ import GHC.Generics (Generic)
 
 type Transactions = State Transaction ()
 
+{-| A type representing a transaction.
+ -}
 data Transaction = Transaction
   { tYear :: Int
   , tMonth :: Int
@@ -28,6 +30,8 @@ data Transaction = Transaction
   , tAmount :: Int
   } deriving (Show, Read, Ord, Eq, Default, Generic)
 
+{-| A type representing an accounts title.
+ -}
 data Category = Category
   { cName :: Text
   , cType :: CategoryType
