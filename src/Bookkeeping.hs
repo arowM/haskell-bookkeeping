@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 module Bookkeeping
   (
   ) where
@@ -30,3 +31,4 @@ data CategoryType
   | Stock
   | Revenue
   | Expenses
+  deriving (Show, Read, Ord, Eq, Enum, Functor)
