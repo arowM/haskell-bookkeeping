@@ -1,15 +1,18 @@
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
 
 module Bookkeeping
-  (
+  ( Transactions
+  , Transaction
+  , Category
+  , CategoryType
   ) where
 
 import Control.Monad.State (State)
+import Data.Text (Text)
 
-newtype Transactions m a =
-  Transactions { unTransactions :: StateT Transaction m a }
+type Transactions =
+  State Transaction ()
 
 data Transaction = Transaction
   { tYear        :: Int
@@ -19,13 +22,13 @@ data Transaction = Transaction
   , tSubDesc     :: Text
   , tCategory    :: Text
   , tAmount      :: Int
-  } deriving (Show, Read, Ord, Eq, Enum)
+  } deriving (Show, Read, Ord, Eq)
 
 
 data Category = Category
   { cName :: Text
   , cType :: CategoryType
-  } deriving (Show, Read, Ord, Eq, Enum)
+  } deriving (Show, Read, Ord, Eq)
 
 
 data CategoryType
@@ -34,4 +37,4 @@ data CategoryType
   | Stock
   | Revenue
   | Expenses
-  deriving (Show, Read, Ord, Eq, Enum, Functor)
+  deriving (Show, Read, Ord, Eq, Enum)
