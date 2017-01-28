@@ -15,11 +15,11 @@ module Bookkeeping
   , Amount(..)
   , Category
   , CategoryName(..)
-  , CategoryType
+  , CategoryType(..)
   , year
   , month
   , activity
-  , assets
+  , dayTrans
   ) where
 
 import Control.Monad.State (State, execState, put)
@@ -110,6 +110,22 @@ activity :: Day -> Description -> DayTransactions -> MonthTransactions
 activity d desc dts = put $ fmap (($ desc) . ($ d)) fs
   where
     fs = execState dts mempty
+
+
+dayTrans :: CategoryType -> CategoryName -> Description -> Amount -> DayTransactions
+dayTrans categ name desc amount =
+  put $ DList.singleton $ \d desc' m y ->
+    Transaction
+      { tYear = y
+      , tMonth = m
+      , tDay = d
+      , tDescription = desc' <> " " <> desc
+      , tCategory = Category
+        { cName = name
+        , cType = categ
+        }
+      , tAmount = amount
+      }
 
 -- ====================
 -- = Orphan instances =
