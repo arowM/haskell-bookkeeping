@@ -1,9 +1,6 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 
 module Bookkeeping
   ( Transactions
@@ -25,11 +22,9 @@ module Bookkeeping
 import Control.Monad.State (State, execState, put)
 import Data.DList (DList)
 import qualified Data.DList as DList
-import Data.Default (Default(def))
 import Data.Monoid ((<>))
 import Data.String (IsString(..))
-import Data.Text (Text, pack)
-import GHC.Generics (Generic)
+import Data.Text (Text)
 
 type Transactions = State (DList Transaction) ()
 
@@ -48,23 +43,23 @@ data Transaction = Transaction
   , tDescription :: Description
   , tCategory :: Category
   , tAmount :: Amount
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 newtype Year = Year
   { unYear :: Int
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 newtype Month = Month
   { unMonth :: Int
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 newtype Day = Day
   { unDay :: Int
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 newtype Description = Description
   { unDescription :: Text
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 instance IsString Description where
   fromString = Description . fromString
@@ -75,18 +70,18 @@ instance Monoid Description where
 
 newtype Amount = Amount
   { unAmount :: Int
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 {-| A type representing an accounts title.
  -}
 data Category = Category
   { cName :: CategoryName
   , cType :: CategoryType
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 newtype CategoryName = CategoryName
   { unCategoryName :: Text
-  } deriving (Show, Read, Ord, Eq, Default, Generic)
+  } deriving (Show, Read, Ord, Eq)
 
 instance IsString CategoryName where
   fromString = CategoryName . fromString
@@ -98,9 +93,6 @@ data CategoryType
   | Revenue
   | Expenses
   deriving (Show, Read, Ord, Eq, Enum)
-
-instance Default CategoryType where
-  def = Assets
 
 -- =============
 -- = Modifiers =
@@ -142,9 +134,3 @@ dayTrans categ name desc amount =
     , tCategory = Category {cName = name, cType = categ}
     , tAmount = amount
     }
-
--- ====================
--- = Orphan instances =
--- ====================
-instance Default Text where
-  def = pack (def :: String)
