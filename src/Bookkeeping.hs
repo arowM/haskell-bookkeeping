@@ -1,4 +1,7 @@
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE Strict #-}
+{-# LANGUAGE StrictData #-}
+
 module Bookkeeping
   (
   ) where
@@ -9,19 +12,19 @@ newtype Transactions m a =
   Transactions { unTransactions :: StateT Transaction m a }
 
 data Transaction = Transaction
-  { tYear        :: {-# UNPACK #-} !Int
-  , tMonth       :: {-# UNPACK #-} !Int
-  , tDate        :: {-# UNPACK #-} !Int
-  , tDescription :: {-# UNPACK #-} !Text
-  , tSubDesc     :: {-# UNPACK #-} !Text
-  , tCategory    :: {-# UNPACK #-} !Text
-  , tAmount      :: {-# UNPACK #-} !Int
+  { tYear        :: Int
+  , tMonth       :: Int
+  , tDate        :: Int
+  , tDescription :: Text
+  , tSubDesc     :: Text
+  , tCategory    :: Text
+  , tAmount      :: Int
   } deriving (Show, Read, Ord, Eq, Enum)
 
 
 data Category = Category
-  { name :: {-# UNPACK #-} !Text
-  , categoryType :: {-# UNPACK #-} !CategoryType
+  { name :: Text
+  , categoryType :: CategoryType
   } deriving (Show, Read, Ord, Eq, Enum)
 
 
