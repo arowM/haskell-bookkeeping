@@ -20,7 +20,7 @@ module Bookkeeping
   , dayTrans
   ) where
 
-import Control.Monad.State (State, execState, put)
+import Control.Monad.State (State, execState, modify)
 import Data.DList (DList)
 import qualified Data.DList as DList
 import Data.Monoid ((<>))
@@ -101,21 +101,21 @@ data CategoryType
 {-| Convert from `YearTransactions` to `Transactions`.
 -}
 year :: Year -> YearTransactions -> Transactions
-year y yts = put $ fmap ($ y) fs
+year y yts = modify . flip mappend $ fmap ($ y) fs
   where
     fs = execState yts mempty
 
 {-| Convert from `MonthTransactions` to `YearTransactions`.
 -}
 month :: Month -> MonthTransactions -> YearTransactions
-month m mts = put $ fmap ($ m) fs
+month m mts = modify . flip mappend $ fmap ($ m) fs
   where
     fs = execState mts mempty
 
 {-| Convert from `DayTransactions` to `MonthTransactions`.
 -}
 activity :: Day -> Description -> DayTransactions -> MonthTransactions
-activity d desc dts = put $ fmap (($ desc) . ($ d)) fs
+activity d desc dts = modify . flip mappend $ fmap (($ desc) . ($ d)) fs
   where
     fs = execState dts mempty
 
@@ -125,13 +125,13 @@ dayTrans :: CategoryType
          -> Amount
          -> DayTransactions
 dayTrans categ name desc amount =
-  put $
-  DList.singleton $ \d desc' m y ->
-    Transaction
-    { tYear = y
-    , tMonth = m
-    , tDay = d
-    , tDescription = desc' <> " " <> desc
-    , tCategory = Category {cName = name, cType = categ}
-    , tAmount = amount
-    }
+  modify $ flip mappend $
+    DList.singleton $ \d desc' m y ->
+      Transaction
+      { tYear = y
+      , tMonth = m
+      , tDay = d
+      , tDescription = desc' <> " " <> desc
+      , tCategory = Category {cName = name, cType = categ}
+      , tAmount = amount
+      }
