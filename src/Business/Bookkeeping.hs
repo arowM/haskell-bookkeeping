@@ -8,13 +8,11 @@ module Business.Bookkeeping
   , activity
   , dayTrans
 
-  , Transaction
   , Year(..)
   , Month(..)
   , Day(..)
   , Description(..)
   , Amount(..)
-  , Category
   , CategoryName(..)
   , CategoryType(..)
   ) where
@@ -25,21 +23,21 @@ import Data.Monoid ((<>))
 
 import Business.Bookkeeping.Types
 
-{-| Convert from `YearTransactions` to `Transactions`.
+{-| Convert from 'YearTransactions' to 'Transactions'.
 -}
 year :: Year -> YearTransactions -> Transactions
 year y yts = modify . flip mappend $ fmap ($ y) fs
   where
     fs = execState yts mempty
 
-{-| Convert from `MonthTransactions` to `YearTransactions`.
+{-| Convert from 'MonthTransactions' to 'YearTransactions'.
 -}
 month :: Month -> MonthTransactions -> YearTransactions
 month m mts = modify . flip mappend $ fmap ($ m) fs
   where
     fs = execState mts mempty
 
-{-| Convert from `DayTransactions` to `MonthTransactions`.
+{-| Convert from 'DayTransactions' to 'MonthTransactions'.
 -}
 activity :: Day -> Description -> DayTransactions -> MonthTransactions
 activity d desc dts = modify . flip mappend $ fmap (($ desc) . ($ d)) fs
