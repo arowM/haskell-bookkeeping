@@ -41,6 +41,17 @@ test-suite haskell-bookkeeping-test
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 
+test-suite doctest
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Doctest.hs
+  build-depends:       base
+                     , Glob
+                     , doctest >= 0.10
+                     , haskell-bookkeeping
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
 source-repository head
   type:     git
   location: https://github.com/githubuser/haskell-bookkeeping
