@@ -23,17 +23,20 @@ module Bookkeeping
   ) where
 
 import Control.Monad.State (State, execState, put)
-import Data.Default (Default(def))
 import Data.DList (DList)
 import qualified Data.DList as DList
+import Data.Default (Default(def))
 import Data.Monoid ((<>))
 import Data.String (IsString(..))
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)
 
 type Transactions = State (DList Transaction) ()
+
 type YearTransactions = State (DList (Year -> Transaction)) ()
+
 type MonthTransactions = State (DList (Month -> Year -> Transaction)) ()
+
 type DayTransactions = State (DList (Day -> Description -> Month -> Year -> Transaction)) ()
 
 {-| A type representing a transaction.
@@ -47,21 +50,32 @@ data Transaction = Transaction
   , tAmount :: Amount
   } deriving (Show, Read, Ord, Eq, Default, Generic)
 
-newtype Year = Year { unYear :: Int }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
-newtype Month = Month { unMonth :: Int }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
-newtype Day = Day { unDay :: Int }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
-newtype Description = Description { unDescription :: Text }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
+newtype Year = Year
+  { unYear :: Int
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
+
+newtype Month = Month
+  { unMonth :: Int
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
+
+newtype Day = Day
+  { unDay :: Int
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
+
+newtype Description = Description
+  { unDescription :: Text
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
+
 instance IsString Description where
   fromString = Description . fromString
+
 instance Monoid Description where
   mempty = Description mempty
   mappend (Description a) (Description b) = Description $ mappend a b
-newtype Amount = Amount { unAmount :: Int }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
+
+newtype Amount = Amount
+  { unAmount :: Int
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
 
 {-| A type representing an accounts title.
  -}
@@ -70,8 +84,10 @@ data Category = Category
   , cType :: CategoryType
   } deriving (Show, Read, Ord, Eq, Default, Generic)
 
-newtype CategoryName = CategoryName { unCategoryName :: Text }
-  deriving (Show, Read, Ord, Eq, Default, Generic)
+newtype CategoryName = CategoryName
+  { unCategoryName :: Text
+  } deriving (Show, Read, Ord, Eq, Default, Generic)
+
 instance IsString CategoryName where
   fromString = CategoryName . fromString
 
@@ -89,7 +105,6 @@ instance Default CategoryType where
 -- =============
 -- = Modifiers =
 -- =============
-
 {-| Convert from `YearTransactions` to `Transactions`.
 -}
 year :: Year -> YearTransactions -> Transactions
@@ -111,21 +126,22 @@ activity d desc dts = put $ fmap (($ desc) . ($ d)) fs
   where
     fs = execState dts mempty
 
-
-dayTrans :: CategoryType -> CategoryName -> Description -> Amount -> DayTransactions
+dayTrans :: CategoryType
+         -> CategoryName
+         -> Description
+         -> Amount
+         -> DayTransactions
 dayTrans categ name desc amount =
-  put $ DList.singleton $ \d desc' m y ->
+  put $
+  DList.singleton $ \d desc' m y ->
     Transaction
-      { tYear = y
-      , tMonth = m
-      , tDay = d
-      , tDescription = desc' <> " " <> desc
-      , tCategory = Category
-        { cName = name
-        , cType = categ
-        }
-      , tAmount = amount
-      }
+    { tYear = y
+    , tMonth = m
+    , tDay = d
+    , tDescription = desc' <> " " <> desc
+    , tCategory = Category {cName = name, cType = categ}
+    , tAmount = amount
+    }
 
 -- ====================
 -- = Orphan instances =
