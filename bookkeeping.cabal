@@ -1,13 +1,14 @@
 name:                bookkeeping
 version:             0.1.0.0
-synopsis:            Initial project template from stack
-description:         Please see README.md
-homepage:            https://github.com/githubuser/bookkeeping#readme
-license:             BSD3
+synopsis:            A module for bookkeeping by double entry.
+description:
+    A module for bookkeeping by double entry. This module provides a way to do bookkeeping programmatically, and export it as a CSV format file.
+homepage:            https://github.com/arowM/haskell-bookkeeping#readme
+license:             MIT
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2017 Author name here
+author:              Kadzuya Okamoto
+maintainer:          arow.okamoto+github@gmail.com
+copyright:           2017 Kadzuya Okamoto
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
@@ -53,4 +54,4 @@ test-suite doctest
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/bookkeeping
+  location: https://github.com/arowM/haskell-bookkeeping
