@@ -9,9 +9,10 @@ module Bookkeeping
   , Transaction
   , Category
   , CategoryType
+  , year
   ) where
 
-import Control.Monad.State (State)
+import Control.Monad.State (State, execState, put)
 import Data.Default (Default(def))
 import Data.DList (DList)
 import qualified Data.DList as DList
@@ -19,6 +20,7 @@ import Data.Text (Text, pack)
 import GHC.Generics (Generic)
 
 type Transactions = State (DList Transaction) ()
+type YearTransactions = State (DList (Year -> Transaction)) ()
 
 {-| A type representing a transaction.
  -}
@@ -56,6 +58,17 @@ data CategoryType
 
 instance Default CategoryType where
   def = Assets
+
+-- =============
+-- = Modifiers =
+-- =============
+
+{-| Convert from `YearTransactions` to `Transactions`.
+-}
+year :: Year -> YearTransactions -> Transactions
+year y yts = put $ fmap ($ y) fs
+  where
+    fs = execState yts mempty
 
 -- ====================
 -- = Orphan instances =
