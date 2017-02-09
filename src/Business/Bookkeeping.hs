@@ -15,6 +15,7 @@ module Business.Bookkeeping
   , Amount(..)
   , CategoryName(..)
   , CategoryType(..)
+  , Transaction(..)
   ) where
 
 import Control.Monad.State (execState, modify)
