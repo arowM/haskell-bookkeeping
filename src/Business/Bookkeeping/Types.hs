@@ -24,6 +24,8 @@ import Data.DList (DList)
 import Data.String (IsString(..))
 import Data.Text (Text)
 
+{-| An alias for handling `Transaction` values with `State` monad.
+ -}
 type Transactions = State (DList Transaction) ()
 
 type YearTransactions = State (DList (Year -> Transaction)) ()
