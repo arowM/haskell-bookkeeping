@@ -17,6 +17,8 @@ module Business.Bookkeeping.Types
   , Category(..)
   , CategoryName(..)
   , CategoryType(..)
+  , DebitCategory(..)
+  , CreditCategory(..)
   ) where
 
 import Control.Monad.State (State)
@@ -41,7 +43,8 @@ data Transaction = Transaction
   , tMonth :: Month
   , tDay :: Day
   , tDescription :: Description
-  , tCategory :: Category
+  , tDebit :: DebitCategory
+  , tCredit :: CreditCategory
   , tAmount :: Amount
   } deriving (Show, Read, Ord, Eq)
 
@@ -71,6 +74,14 @@ instance Monoid Description where
 newtype Amount = Amount
   { unAmount :: Int
   } deriving (Show, Read, Ord, Eq, Num)
+
+newtype DebitCategory = DebitCategory
+  { unDebitCategory :: Category
+  } deriving (Show, Read, Ord, Eq)
+
+newtype CreditCategory = CreditCategory
+  { unCreditCategory :: Category
+  } deriving (Show, Read, Ord, Eq)
 
 {-| A type representing an accounts title.
  -}
