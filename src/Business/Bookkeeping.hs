@@ -7,17 +7,6 @@ module Business.Bookkeeping
   , month
   , activity
   , dayTrans
-
-  , Year(..)
-  , Month(..)
-  , Day(..)
-  , Description(..)
-  , Amount(..)
-  , CategoryName(..)
-  , CategoryType(..)
-  , DebitCategory(..)
-  , CreditCategory(..)
-  , Transaction(..)
   , runTransactions
   ) where
 

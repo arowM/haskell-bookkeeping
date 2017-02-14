@@ -16,8 +16,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  other-modules:       Business.Bookkeeping.Types
   exposed-modules:     Business.Bookkeeping
+                       Business.Bookkeeping.Types
   build-depends:       base >= 4.9 && < 4.10
                      , cassava >= 0.4.5 && < 0.5
                      , dlist >= 0.8.0.2 && < 0.9
