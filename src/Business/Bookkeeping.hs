@@ -18,6 +18,7 @@ module Business.Bookkeeping
   , DebitCategory(..)
   , CreditCategory(..)
   , Transaction(..)
+  , runTransactions
   ) where
 
 import Control.Monad.State (execState, modify)
@@ -65,6 +66,9 @@ dayTrans debit credit desc amount =
     , tCredit = credit
     , tAmount = amount
     }
+
+runTransactions :: Transactions -> [Transaction]
+runTransactions ts = DList.toList $ execState ts mempty
 
 {- $setup
 
