@@ -82,26 +82,26 @@ runTransactions ts = DList.toList $ execState ts mempty
 >>> ppr sample
 tDay: 2015-01-03
 tDescription: 予定1 最初の預金
-tDebit: 預金
-tCredit: 事業主借
+tDebit: 預金 (Assets)
+tCredit: 事業主借 (Liabilities)
 tAmount: 1000
 <BLANKLINE>
 tDay: 2015-01-03
 tDescription: 予定1 切手代
-tDebit: 通信費
-tCredit: 事業主借
+tDebit: 通信費 (Expenses)
+tCredit: 事業主借 (Liabilities)
 tAmount: 80
 <BLANKLINE>
 tDay: 2015-01-04
 tDescription: 予定2 携帯料金
-tDebit: 通信費
-tCredit: 事業主借
+tDebit: 通信費 (Expenses)
+tCredit: 事業主借 (Liabilities)
 tAmount: 3000
 <BLANKLINE>
 tDay: 2015-02-04
 tDescription: 予定3 携帯料金
-tDebit: 通信費
-tCredit: 事業主借
+tDebit: 通信費 (Expenses)
+tCredit: 事業主借 (Liabilities)
 tAmount: 3010
 <BLANKLINE>
 -}
@@ -113,7 +113,13 @@ ppr = T.putStr . T.unlines . map format . runTransactions
       T.unlines
         [ "tDay: " <> (T.pack . show) tDay
         , "tDescription: " <> unDescription tDescription
-        , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit
-        , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit
+        , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit <>
+          " (" <>
+          (T.pack . show . cType . unDebitCategory) tDebit <>
+          ")"
+        , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit <>
+          " (" <>
+          (T.pack . show . cType . unCreditCategory) tCredit <>
+          ")"
         , "tAmount: " <> (T.pack . show . unAmount) tAmount
         ]
