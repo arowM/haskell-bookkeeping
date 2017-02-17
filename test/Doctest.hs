@@ -12,6 +12,8 @@ doDocTest options = doctest $ options <> ghcExtensions
 
 ghcExtensions :: [String]
 ghcExtensions =
-    [ "-XTemplateHaskell"
-    , "-XQuasiQuotes"
+    [ "-XOverloadedStrings"
+    , "-XRecordWildCards"
+    , "-XStrict"
+    , "-XStrictData"
     ]

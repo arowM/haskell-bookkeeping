@@ -55,9 +55,12 @@ dateTrans debit credit desc amount =
 
 runTransactions :: Transactions -> [Transaction]
 runTransactions ts = DList.toList $ execState ts mempty
+
 {- $setup
 
 >>> :set -XOverloadedStrings
+>>> import qualified Data.Text as T
+>>> import qualified Data.Text.IO as T
 >>> :{
 let
   advance categ name = dateTrans
@@ -74,9 +77,40 @@ let
       month 2 $
         activity 4 "予定3" $
           advance Expenses "通信費" "携帯料金" 3010
+  format :: Transaction -> T.Text
+  format (Transaction {..}) = T.unlines
+    [ "tDay: " <> (T.pack . show) tDay
+    , "tDescription: " <> unDescription tDescription
+    , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit
+    , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit
+    , "tAmount: " <> (T.pack . show . unAmount) tAmount
+    ]
 :}
 -}
 {-|
->>> DList.toList $ execState sample mempty
-[Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \26368\21021\12398\38928\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\38928\37329"}, cType = Assets}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 1000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \20999\25163\20195"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 80}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 4}, tDescription = Description {unDescription = "\20104\23450\&2 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 2}, tDate = Date {unDate = 4}, tDescription = Description {unDescription = "\20104\23450\&3 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3010}}]
+>>> T.putStr $ T.unlines $ map format $ runTransactions sample
+tDay: 2015-01-03
+tDescription: 予定1 最初の預金
+tDebit: 預金
+tCredit: 事業主借
+tAmount: 1000
+<BLANKLINE>
+tDay: 2015-01-03
+tDescription: 予定1 切手代
+tDebit: 通信費
+tCredit: 事業主借
+tAmount: 80
+<BLANKLINE>
+tDay: 2015-01-04
+tDescription: 予定2 携帯料金
+tDebit: 通信費
+tCredit: 事業主借
+tAmount: 3000
+<BLANKLINE>
+tDay: 2015-02-04
+tDescription: 予定3 携帯料金
+tDebit: 通信費
+tCredit: 事業主借
+tAmount: 3010
+<BLANKLINE>
 -}
