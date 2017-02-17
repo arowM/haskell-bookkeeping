@@ -24,6 +24,10 @@ library
                      , mtl >= 2.2.1 && < 2.3
                      , text >= 1.2.2.1 && < 1.3
   default-language:    Haskell2010
+  default-extensions:  OverloadedStrings
+                     , Strict
+                     , StrictData
+  other-extensions:    GeneralizedNewtypeDeriving
 
 executable bookkeeping-exe
   hs-source-dirs:      app

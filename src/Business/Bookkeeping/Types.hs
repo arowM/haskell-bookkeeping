@@ -1,7 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE Strict #-}
-{-# LANGUAGE StrictData #-}
 
 module Business.Bookkeeping.Types
   ( Transactions

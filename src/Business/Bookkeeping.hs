@@ -1,7 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE Strict #-}
-{-# LANGUAGE StrictData #-}
-
 module Business.Bookkeeping
   ( year
   , month
