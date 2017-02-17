@@ -10,6 +10,7 @@ module Business.Bookkeeping
 import Control.Monad.State (execState, modify)
 import qualified Data.DList as DList
 import Data.Monoid ((<>))
+import Data.Time.Calendar (fromGregorian)
 
 import Business.Bookkeeping.Types
 import qualified Business.Bookkeeping.Types as X
@@ -36,18 +37,16 @@ activity d desc dts = modify . flip mappend $ fmap (($ desc) . ($ d)) fs
     fs = execState dts mempty
 
 dateTrans :: DebitCategory
-         -> CreditCategory
-         -> Description
-         -> Amount
-         -> DateTransactions
+          -> CreditCategory
+          -> Description
+          -> Amount
+          -> DateTransactions
 dateTrans debit credit desc amount =
   modify $
   flip mappend $
   DList.singleton $ \d desc' m y ->
     Transaction
-    { tYear = y
-    , tMonth = m
-    , tDate = d
+    { tDay = fromGregorian (unYear y) (unMonth m) (unDate d)
     , tDescription = desc' <> " " <> desc
     , tDebit = debit
     , tCredit = credit
@@ -56,7 +55,6 @@ dateTrans debit credit desc amount =
 
 runTransactions :: Transactions -> [Transaction]
 runTransactions ts = DList.toList $ execState ts mempty
-
 {- $setup
 
 >>> :set -XOverloadedStrings

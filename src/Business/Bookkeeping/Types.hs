@@ -22,6 +22,7 @@ import Control.Monad.State (State)
 import Data.DList (DList)
 import Data.String (IsString(..))
 import Data.Text (Text)
+import Data.Time.Calendar (Day)
 
 {-| An alias for handling `Transaction` values with `State` monad.
  -}
@@ -36,9 +37,7 @@ type DateTransactions = State (DList (Date -> Description -> Month -> Year -> Tr
 {-| A type representing a transaction.
  -}
 data Transaction = Transaction
-  { tYear :: Year
-  , tMonth :: Month
-  , tDate :: Date
+  { tDay :: Day
   , tDescription :: Description
   , tDebit :: DebitCategory
   , tCredit :: CreditCategory
@@ -46,7 +45,7 @@ data Transaction = Transaction
   } deriving (Show, Read, Ord, Eq)
 
 newtype Year = Year
-  { unYear :: Int
+  { unYear :: Integer
   } deriving (Show, Read, Ord, Eq, Num)
 
 newtype Month = Month
