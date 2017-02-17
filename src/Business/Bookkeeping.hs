@@ -4,17 +4,39 @@ module Business.Bookkeeping
   , activity
   , dateTrans
   , runTransactions
+  , ppr
   , module X
   ) where
 
 import Control.Monad.State (execState, modify)
 import qualified Data.DList as DList
 import Data.Monoid ((<>))
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import Data.Time.Calendar (fromGregorian)
 
 import Business.Bookkeeping.Types
 import qualified Business.Bookkeeping.Types as X
 
+{- $setup
+>>> :{
+let
+  advance categ name = dateTrans
+    (DebitCategory $ Category name categ)
+    (CreditCategory $ Category "事業主借" Liabilities)
+  sample =
+    year 2015 $ do
+      month 1 $ do
+        activity 3 "予定1" $ do
+          advance Assets "預金" "最初の預金" 1000
+          advance Expenses "通信費" "切手代" 80
+        activity 4 "予定2" $
+          advance Expenses "通信費" "携帯料金" 3000
+      month 2 $
+        activity 4 "予定3" $
+          advance Expenses "通信費" "携帯料金" 3010
+:}
+-}
 {-| Convert from 'YearTransactions' to 'Transactions'.
 -}
 year :: Year -> YearTransactions -> Transactions
@@ -56,39 +78,8 @@ dateTrans debit credit desc amount =
 runTransactions :: Transactions -> [Transaction]
 runTransactions ts = DList.toList $ execState ts mempty
 
-{- $setup
-
->>> :set -XOverloadedStrings
->>> import qualified Data.Text as T
->>> import qualified Data.Text.IO as T
->>> :{
-let
-  advance categ name = dateTrans
-    (DebitCategory $ Category name categ)
-    (CreditCategory $ Category "事業主借" Liabilities)
-  sample =
-    year 2015 $ do
-      month 1 $ do
-        activity 3 "予定1" $ do
-          advance Assets "預金" "最初の預金" 1000
-          advance Expenses "通信費" "切手代" 80
-        activity 4 "予定2" $
-          advance Expenses "通信費" "携帯料金" 3000
-      month 2 $
-        activity 4 "予定3" $
-          advance Expenses "通信費" "携帯料金" 3010
-  format :: Transaction -> T.Text
-  format (Transaction {..}) = T.unlines
-    [ "tDay: " <> (T.pack . show) tDay
-    , "tDescription: " <> unDescription tDescription
-    , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit
-    , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit
-    , "tAmount: " <> (T.pack . show . unAmount) tAmount
-    ]
-:}
--}
-{-|
->>> T.putStr $ T.unlines $ map format $ runTransactions sample
+{-| A pretty printer for `Transactions`.
+>>> ppr sample
 tDay: 2015-01-03
 tDescription: 予定1 最初の預金
 tDebit: 預金
@@ -114,3 +105,15 @@ tCredit: 事業主借
 tAmount: 3010
 <BLANKLINE>
 -}
+ppr :: Transactions -> IO ()
+ppr = T.putStr . T.unlines . map format . runTransactions
+  where
+    format :: Transaction -> T.Text
+    format Transaction {..} =
+      T.unlines
+        [ "tDay: " <> (T.pack . show) tDay
+        , "tDescription: " <> unDescription tDescription
+        , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit
+        , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit
+        , "tAmount: " <> (T.pack . show . unAmount) tAmount
+        ]
