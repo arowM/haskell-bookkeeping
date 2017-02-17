@@ -8,6 +8,7 @@ module Business.Bookkeeping
   , activity
   , dayTrans
   , runTransactions
+  , module X
   ) where
 
 import Control.Monad.State (execState, modify)
@@ -15,6 +16,7 @@ import qualified Data.DList as DList
 import Data.Monoid ((<>))
 
 import Business.Bookkeeping.Types
+import qualified Business.Bookkeeping.Types as X
 
 {-| Convert from 'YearTransactions' to 'Transactions'.
 -}
