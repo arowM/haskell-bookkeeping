@@ -2,7 +2,7 @@ module Business.Bookkeeping
   ( year
   , month
   , activity
-  , dayTrans
+  , dateTrans
   , runTransactions
   , module X
   ) where
@@ -28,26 +28,26 @@ month m mts = modify . flip mappend $ fmap ($ m) fs
   where
     fs = execState mts mempty
 
-{-| Convert from 'DayTransactions' to 'MonthTransactions'.
+{-| Convert from 'DateTransactions' to 'MonthTransactions'.
 -}
-activity :: Day -> Description -> DayTransactions -> MonthTransactions
+activity :: Date -> Description -> DateTransactions -> MonthTransactions
 activity d desc dts = modify . flip mappend $ fmap (($ desc) . ($ d)) fs
   where
     fs = execState dts mempty
 
-dayTrans :: DebitCategory
+dateTrans :: DebitCategory
          -> CreditCategory
          -> Description
          -> Amount
-         -> DayTransactions
-dayTrans debit credit desc amount =
+         -> DateTransactions
+dateTrans debit credit desc amount =
   modify $
   flip mappend $
   DList.singleton $ \d desc' m y ->
     Transaction
     { tYear = y
     , tMonth = m
-    , tDay = d
+    , tDate = d
     , tDescription = desc' <> " " <> desc
     , tDebit = debit
     , tCredit = credit
@@ -62,7 +62,7 @@ runTransactions ts = DList.toList $ execState ts mempty
 >>> :set -XOverloadedStrings
 >>> :{
 let
-  advance categ name = dayTrans
+  advance categ name = dateTrans
     (DebitCategory $ Category name categ)
     (CreditCategory $ Category "事業主借" Liabilities)
   sample =
@@ -80,5 +80,5 @@ let
 -}
 {-|
 >>> DList.toList $ execState sample mempty
-[Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDay = Day {unDay = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \26368\21021\12398\38928\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\38928\37329"}, cType = Assets}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 1000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDay = Day {unDay = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \20999\25163\20195"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 80}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDay = Day {unDay = 4}, tDescription = Description {unDescription = "\20104\23450\&2 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 2}, tDay = Day {unDay = 4}, tDescription = Description {unDescription = "\20104\23450\&3 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3010}}]
+[Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \26368\21021\12398\38928\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\38928\37329"}, cType = Assets}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 1000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 3}, tDescription = Description {unDescription = "\20104\23450\&1 \20999\25163\20195"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 80}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 1}, tDate = Date {unDate = 4}, tDescription = Description {unDescription = "\20104\23450\&2 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3000}},Transaction {tYear = Year {unYear = 2015}, tMonth = Month {unMonth = 2}, tDate = Date {unDate = 4}, tDescription = Description {unDescription = "\20104\23450\&3 \25658\24111\26009\37329"}, tDebit = DebitCategory {unDebitCategory = Category {cName = CategoryName {unCategoryName = "\36890\20449\36027"}, cType = Expenses}}, tCredit = CreditCategory {unCreditCategory = Category {cName = CategoryName {unCategoryName = "\20107\26989\20027\20511"}, cType = Liabilities}}, tAmount = Amount {unAmount = 3010}}]
 -}

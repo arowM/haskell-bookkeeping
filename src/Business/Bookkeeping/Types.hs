@@ -4,11 +4,11 @@ module Business.Bookkeeping.Types
   ( Transactions
   , YearTransactions
   , MonthTransactions
-  , DayTransactions
+  , DateTransactions
   , Transaction(..)
   , Year(..)
   , Month(..)
-  , Day(..)
+  , Date(..)
   , Description(..)
   , Amount(..)
   , Category(..)
@@ -31,14 +31,14 @@ type YearTransactions = State (DList (Year -> Transaction)) ()
 
 type MonthTransactions = State (DList (Month -> Year -> Transaction)) ()
 
-type DayTransactions = State (DList (Day -> Description -> Month -> Year -> Transaction)) ()
+type DateTransactions = State (DList (Date -> Description -> Month -> Year -> Transaction)) ()
 
 {-| A type representing a transaction.
  -}
 data Transaction = Transaction
   { tYear :: Year
   , tMonth :: Month
-  , tDay :: Day
+  , tDate :: Date
   , tDescription :: Description
   , tDebit :: DebitCategory
   , tCredit :: CreditCategory
@@ -53,8 +53,8 @@ newtype Month = Month
   { unMonth :: Int
   } deriving (Show, Read, Ord, Eq, Num)
 
-newtype Day = Day
-  { unDay :: Int
+newtype Date = Date
+  { unDate :: Int
   } deriving (Show, Read, Ord, Eq, Num)
 
 newtype Description = Description
