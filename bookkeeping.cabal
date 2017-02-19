@@ -18,7 +18,6 @@ library
   hs-source-dirs:      src
   exposed-modules:     Business.Bookkeeping
   build-depends:       base >= 4.9 && < 4.10
-                     , cassava >= 0.4.5 && < 0.5
                      , dlist >= 0.8.0.2 && < 0.9
                      , mtl >= 2.2.1 && < 2.3
                      , text >= 1.2.2.1 && < 1.3
