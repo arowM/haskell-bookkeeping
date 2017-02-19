@@ -58,20 +58,21 @@ import Data.Time.Calendar (Day, fromGregorian)
 {- $setup
 >>> :{
 let
-  advance categ name = dateTrans
-    (DebitCategory $ Category name categ)
-    (CreditCategory $ Category "事業主借" Liabilities)
+  advance :: CategoryName -> Description -> Amount -> DateTransactions
+  advance name = dateTrans
+    (DebitCategory $ Category name Expenses)
+    (CreditCategory $ Category "Deposit" Assets)
   sample =
     year 2015 $ do
       month 1 $ do
-        activity 3 "予定1" $ do
-          advance Assets "預金" "最初の預金" 1000
-          advance Expenses "通信費" "切手代" 80
-        activity 4 "予定2" $
-          advance Expenses "通信費" "携帯料金" 3000
+        activity 1 "Constant expenses --" $
+          advance "Communication" "Mobile phone" 3000
+        activity 3 "Mail a contract --" $ do
+          advance "Communication" "Stamp" 50
+          advance "Office supplies" "Envelope" 100
       month 2 $
-        activity 4 "予定3" $
-          advance Expenses "通信費" "携帯料金" 3010
+        activity 1 "Constant expenses --" $
+          advance "Communication" "Mobile phone" 3000
 :}
 -}
 {-| Convert from 'YearTransactions' to 'Transactions'.
@@ -118,29 +119,29 @@ toDList ts = execState ts mempty
 {-| A pretty printer for `Transactions`.
 
 >>> ppr sample
-tDay: 2015-01-03
-tDescription: 予定1 最初の預金
-tDebit: 預金 (Assets)
-tCredit: 事業主借 (Liabilities)
-tAmount: 1000
-<BLANKLINE>
-tDay: 2015-01-03
-tDescription: 予定1 切手代
-tDebit: 通信費 (Expenses)
-tCredit: 事業主借 (Liabilities)
-tAmount: 80
-<BLANKLINE>
-tDay: 2015-01-04
-tDescription: 予定2 携帯料金
-tDebit: 通信費 (Expenses)
-tCredit: 事業主借 (Liabilities)
+tDay: 2015-01-01
+tDescription: Constant expenses -- Mobile phone
+tDebit: Communication (Expenses)
+tCredit: Deposit (Assets)
 tAmount: 3000
 <BLANKLINE>
-tDay: 2015-02-04
-tDescription: 予定3 携帯料金
-tDebit: 通信費 (Expenses)
-tCredit: 事業主借 (Liabilities)
-tAmount: 3010
+tDay: 2015-01-03
+tDescription: Mail a contract -- Stamp
+tDebit: Communication (Expenses)
+tCredit: Deposit (Assets)
+tAmount: 50
+<BLANKLINE>
+tDay: 2015-01-03
+tDescription: Mail a contract -- Envelope
+tDebit: Office supplies (Expenses)
+tCredit: Deposit (Assets)
+tAmount: 100
+<BLANKLINE>
+tDay: 2015-02-01
+tDescription: Constant expenses -- Mobile phone
+tDebit: Communication (Expenses)
+tCredit: Deposit (Assets)
+tAmount: 3000
 <BLANKLINE>
 -}
 ppr :: Transactions -> IO ()
