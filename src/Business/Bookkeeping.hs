@@ -15,17 +15,18 @@ module Business.Bookkeeping
   (
   -- * Usage examples
   -- $setup
+
+  -- * Pritty printers
+    ppr
+
   -- * Constructors
-    year
+  , year
   , month
   , activity
   , dateTrans
 
   -- * Converters
   , runTransactions
-
-  -- * Pritty printers
-  , ppr
 
   -- * Types
   , Transactions
