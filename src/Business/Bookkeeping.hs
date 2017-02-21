@@ -59,20 +59,20 @@ import Data.Time.Calendar (Day, fromGregorian)
 {- $setup
 >>> :{
 let
-  advance :: CategoryName -> Description -> Amount -> DateTransactions
+  advance :: CategoryName -> SubDescription -> Amount -> DateTransactions
   advance name = dateTrans
     (DebitCategory $ Category name Expenses)
     (CreditCategory $ Category "Deposit" Assets)
   sample =
     year 2015 $ do
       month 1 $ do
-        activity 1 "Constant expenses --" $
+        activity 1 "Constant expenses" $
           advance "Communication" "Mobile phone" 3000
-        activity 3 "Mail a contract --" $ do
+        activity 3 "Mail a contract" $ do
           advance "Communication" "Stamp" 50
           advance "Office supplies" "Envelope" 100
       month 2 $
-        activity 1 "Constant expenses --" $
+        activity 1 "Constant expenses" $
           advance "Communication" "Mobile phone" 3000
 :}
 -}
@@ -96,14 +96,15 @@ activity d desc =
 
 dateTrans :: DebitCategory
           -> CreditCategory
-          -> Description
+          -> SubDescription
           -> Amount
           -> DateTransactions
-dateTrans debit credit desc amount =
-  modify . flip mappend . DList.singleton $ \d desc' m y ->
+dateTrans debit credit subdesc amount =
+  modify . flip mappend . DList.singleton $ \d desc m y ->
     Transaction
     { tDay = fromGregorian (unYear y) (unMonth m) (unDate d)
-    , tDescription = desc' <> " " <> desc
+    , tDescription = desc
+    , tSubDescription = subdesc
     , tDebit = debit
     , tCredit = credit
     , tAmount = amount
@@ -121,25 +122,29 @@ toDList ts = execState ts mempty
 
 >>> ppr sample
 tDay: 2015-01-01
-tDescription: Constant expenses -- Mobile phone
+tDescription: Constant expenses
+tSubDescription: Mobile phone
 tDebit: Communication (Expenses)
 tCredit: Deposit (Assets)
 tAmount: 3000
 <BLANKLINE>
 tDay: 2015-01-03
-tDescription: Mail a contract -- Stamp
+tDescription: Mail a contract
+tSubDescription: Stamp
 tDebit: Communication (Expenses)
 tCredit: Deposit (Assets)
 tAmount: 50
 <BLANKLINE>
 tDay: 2015-01-03
-tDescription: Mail a contract -- Envelope
+tDescription: Mail a contract
+tSubDescription: Envelope
 tDebit: Office supplies (Expenses)
 tCredit: Deposit (Assets)
 tAmount: 100
 <BLANKLINE>
 tDay: 2015-02-01
-tDescription: Constant expenses -- Mobile phone
+tDescription: Constant expenses
+tSubDescription: Mobile phone
 tDebit: Communication (Expenses)
 tCredit: Deposit (Assets)
 tAmount: 3000
@@ -153,6 +158,7 @@ ppr = T.putStr . T.unlines . map format . runTransactions
       T.unlines
         [ "tDay: " <> (T.pack . show) tDay
         , "tDescription: " <> unDescription tDescription
+        , "tSubDescription: " <> unSubDescription tSubDescription
         , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit <>
           " (" <>
           (T.pack . show . cType . unDebitCategory) tDebit <>
@@ -186,6 +192,7 @@ type DateTransactions = Trans (Date -> Description -> Month -> Year -> Transacti
 data Transaction = Transaction
   { tDay :: Day
   , tDescription :: Description
+  , tSubDescription :: SubDescription
   , tDebit :: DebitCategory
   , tCredit :: CreditCategory
   , tAmount :: Amount
@@ -213,6 +220,17 @@ instance IsString Description where
 instance Monoid Description where
   mempty = Description mempty
   mappend (Description a) (Description b) = Description $ mappend a b
+
+newtype SubDescription = SubDescription
+  { unSubDescription :: Text
+  } deriving (Show, Read, Ord, Eq)
+
+instance IsString SubDescription where
+  fromString = SubDescription . fromString
+
+instance Monoid SubDescription where
+  mempty = SubDescription mempty
+  mappend (SubDescription a) (SubDescription b) = SubDescription $ mappend a b
 
 newtype Amount = Amount
   { unAmount :: Int
