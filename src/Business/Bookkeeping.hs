@@ -38,6 +38,7 @@ module Business.Bookkeeping
   , Month(..)
   , Date(..)
   , Description(..)
+  , SubDescription(..)
   , Amount(..)
   , Category(..)
   , CategoryName(..)
