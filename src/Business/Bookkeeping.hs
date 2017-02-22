@@ -1,4 +1,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE Strict #-}
+{-# LANGUAGE StrictData #-}
 
 {- |
 Module      :  Business.Bookkeeping
