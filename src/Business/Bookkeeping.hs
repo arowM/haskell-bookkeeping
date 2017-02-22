@@ -201,15 +201,15 @@ data Transaction = Transaction
 
 newtype Year = Year
   { unYear :: Integer
-  } deriving (Show, Read, Ord, Eq, Num)
+  } deriving (Show, Read, Ord, Eq, Num, Enum)
 
 newtype Month = Month
   { unMonth :: Int
-  } deriving (Show, Read, Ord, Eq, Num)
+  } deriving (Show, Read, Ord, Eq, Num, Enum)
 
 newtype Date = Date
   { unDate :: Int
-  } deriving (Show, Read, Ord, Eq, Num)
+  } deriving (Show, Read, Ord, Eq, Num, Enum)
 
 newtype Description = Description
   { unDescription :: Text
