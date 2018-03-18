@@ -1,6 +1,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE Strict #-}
 {-# LANGUAGE StrictData #-}
+{-# LANGUAGE CPP #-}
 
 {- |
 Module      :  Business.Bookkeeping
@@ -54,6 +55,7 @@ import Control.Monad.State (State, execState, modify)
 import qualified Data.DList as DList
 import Data.DList (DList)
 import Data.Monoid ((<>))
+import qualified Data.Semigroup as Sem
 import Data.String (IsString(..))
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -231,9 +233,14 @@ newtype Description = Description
 instance IsString Description where
   fromString = Description . fromString
 
+instance Sem.Semigroup Description where
+  Description a <> Description b = Description $ mappend a b
+
 instance Monoid Description where
   mempty = Description mempty
-  mappend (Description a) (Description b) = Description $ mappend a b
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = (Sem.<>)
+#endif
 
 newtype SubDescription = SubDescription
   { unSubDescription :: Text
@@ -242,9 +249,14 @@ newtype SubDescription = SubDescription
 instance IsString SubDescription where
   fromString = SubDescription . fromString
 
+instance Sem.Semigroup SubDescription where
+  SubDescription a <> SubDescription b = SubDescription $ mappend a b
+
 instance Monoid SubDescription where
   mempty = SubDescription mempty
-  mappend (SubDescription a) (SubDescription b) = SubDescription $ mappend a b
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = (Sem.<>)
+#endif
 
 newtype Amount = Amount
   { unAmount :: Int

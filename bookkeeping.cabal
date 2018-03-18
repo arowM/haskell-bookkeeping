@@ -26,6 +26,9 @@ library
   default-extensions:  OverloadedStrings
                      , RecordWildCards
   other-extensions:    GeneralizedNewtypeDeriving
+  ghc-options:         -Wcompat -Wall
+  if !impl(ghc >= 8.0)
+    build-depends: semigroups == 0.18.*
 
 test-suite bookkeeping-test
   type:                exitcode-stdio-1.0
