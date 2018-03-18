@@ -26,6 +26,7 @@ module Business.Bookkeeping
   , month
   , activity
   , dateTrans
+  , categoryName
 
   -- * Converters
   , runTransactions
@@ -43,7 +44,7 @@ module Business.Bookkeeping
   , SubDescription(..)
   , Amount(..)
   , Category(..)
-  , CategoryName(..)
+  , CategoryName
   , CategoryType(..)
   , DebitCategory(..)
   , CreditCategory(..)
@@ -162,14 +163,24 @@ ppr = T.putStr . T.unlines . map format . runTransactions
         [ "tDay: " <> (T.pack . show) tDay
         , "tDescription: " <> unDescription tDescription
         , "tSubDescription: " <> unSubDescription tSubDescription
-        , "tDebit: " <> (unCategoryName . cName . unDebitCategory) tDebit <>
-          " (" <>
-          (T.pack . show . cType . unDebitCategory) tDebit <>
-          ")"
-        , "tCredit: " <> (unCategoryName . cName . unCreditCategory) tCredit <>
-          " (" <>
-          (T.pack . show . cType . unCreditCategory) tCredit <>
-          ")"
+        , T.concat
+          [ "tDebit: "
+          , (unCategoryName . cName . unDebitCategory) tDebit
+          , maybe "" (" - " <>) $
+            (unCategorySubName . cName . unDebitCategory) tDebit
+          , " ("
+          , (T.pack . show . cType . unDebitCategory) tDebit
+          , ")"
+          ]
+        , T.concat
+          [ "tCredit: "
+          , (unCategoryName . cName . unCreditCategory) tCredit
+          , maybe "" (" - " <>) $
+            (unCategorySubName . cName . unCreditCategory) tCredit
+          , " ("
+          , (T.pack . show . cType . unCreditCategory) tCredit
+          , ")"
+          ]
         , "tAmount: " <> (T.pack . show . unAmount) tAmount
         ]
 
@@ -254,12 +265,27 @@ data Category = Category
   , cType :: CategoryType
   } deriving (Show, Read, Ord, Eq)
 
-newtype CategoryName = CategoryName
-  { unCategoryName :: Text
+data CategoryName = CategoryName
+  { name :: Text
+  , sub :: Maybe Text
   } deriving (Show, Read, Ord, Eq)
 
+
+unCategoryName :: CategoryName -> Text
+unCategoryName CategoryName {..} = name
+
+unCategorySubName :: CategoryName -> Maybe Text
+unCategorySubName CategoryName {..} = sub
+
+categoryName :: Text -> Maybe Text -> CategoryName
+categoryName = CategoryName
+
 instance IsString CategoryName where
-  fromString = CategoryName . fromString
+  fromString str =
+    CategoryName
+      { name = fromString str
+      , sub = Nothing
+      }
 
 data CategoryType
   = Assets
