@@ -228,35 +228,17 @@ newtype Date = Date
 
 newtype Description = Description
   { unDescription :: Text
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Sem.Semigroup, Monoid)
 
 instance IsString Description where
   fromString = Description . fromString
 
-instance Sem.Semigroup Description where
-  Description a <> Description b = Description $ mappend a b
-
-instance Monoid Description where
-  mempty = Description mempty
-#if !(MIN_VERSION_base(4,11,0))
-  mappend = (Sem.<>)
-#endif
-
 newtype SubDescription = SubDescription
   { unSubDescription :: Text
-  } deriving (Show, Read, Ord, Eq)
+  } deriving (Show, Read, Ord, Eq, Sem.Semigroup, Monoid)
 
 instance IsString SubDescription where
   fromString = SubDescription . fromString
-
-instance Sem.Semigroup SubDescription where
-  SubDescription a <> SubDescription b = SubDescription $ mappend a b
-
-instance Monoid SubDescription where
-  mempty = SubDescription mempty
-#if !(MIN_VERSION_base(4,11,0))
-  mappend = (Sem.<>)
-#endif
 
 newtype Amount = Amount
   { unAmount :: Int
