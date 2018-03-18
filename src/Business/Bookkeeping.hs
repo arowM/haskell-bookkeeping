@@ -37,12 +37,12 @@ module Business.Bookkeeping
   , MonthTransactions
   , DateTransactions
   , Transaction(..)
-  , Year(..)
-  , Month(..)
-  , Date(..)
-  , Description(..)
-  , SubDescription(..)
-  , Amount(..)
+  , Year
+  , Month
+  , Date
+  , Description
+  , SubDescription
+  , Amount
   , Category(..)
   , CategoryName
   , CategoryType(..)
