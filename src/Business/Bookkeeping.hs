@@ -45,7 +45,7 @@ module Business.Bookkeeping
   , SubDescription
   , Amount
   , Category(..)
-  , CategoryName
+  , CategoryName(..)
   , CategoryType(..)
   , DebitCategory(..)
   , CreditCategory(..)
@@ -278,26 +278,16 @@ data Category = Category
   } deriving (Show, Read, Ord, Eq)
 
 data CategoryName = CategoryName
-  { name :: Text
-  , sub :: Maybe Text
+  { unCategoryName :: Text
+  , unCategorySubName :: Maybe Text
   } deriving (Show, Read, Ord, Eq)
-
-
-unCategoryName :: CategoryName -> Text
-unCategoryName CategoryName {..} = name
-
-unCategorySubName :: CategoryName -> Maybe Text
-unCategorySubName CategoryName {..} = sub
 
 categoryName :: Text -> Maybe Text -> CategoryName
 categoryName = CategoryName
 
 instance IsString CategoryName where
   fromString str =
-    CategoryName
-      { name = fromString str
-      , sub = Nothing
-      }
+    CategoryName (fromString str) Nothing
 
 data CategoryType
   = Assets
