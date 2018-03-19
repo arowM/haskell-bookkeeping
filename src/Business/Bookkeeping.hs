@@ -221,15 +221,15 @@ data Transaction = Transaction
 
 newtype Year = Year
   { unYear :: Integer
-  } deriving (Show, Read, Ord, Eq, Num, Enum)
+  } deriving (Show, Read, Ord, Eq, Num, Enum, Real, Integral)
 
 newtype Month = Month
   { unMonth :: Int
-  } deriving (Show, Read, Ord, Eq, Num, Enum)
+  } deriving (Show, Read, Ord, Eq, Num, Enum, Real, Integral)
 
 newtype Date = Date
   { unDate :: Int
-  } deriving (Show, Read, Ord, Eq, Num, Enum)
+  } deriving (Show, Read, Ord, Eq, Num, Enum, Real, Integral)
 
 newtype Description = Description
   { unDescription :: Text
@@ -247,7 +247,7 @@ instance IsString SubDescription where
 
 newtype Amount = Amount
   { unAmount :: Int
-  } deriving (Show, Read, Ord, Eq, Num)
+  } deriving (Show, Read, Ord, Eq, Num, Enum, Real, Integral)
 
 newtype DebitCategory = DebitCategory
   { unDebitCategory :: Category
