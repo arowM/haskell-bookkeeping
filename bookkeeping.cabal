@@ -1,5 +1,5 @@
 name:                bookkeeping
-version:             0.3.2.0
+version:             0.3.3.0
 synopsis:            A module for bookkeeping by double entry.
 description:
     A module for bookkeeping by double entry. This module provides a way to do bookkeeping programmatically.
