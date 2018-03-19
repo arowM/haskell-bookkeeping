@@ -42,10 +42,15 @@ module Business.Bookkeeping
   , Month
   , Date
   , Description
+  , unDescription
   , SubDescription
+  , unSubDescription
   , Amount
+  , unAmount
   , Category(..)
-  , CategoryName(..)
+  , CategoryName
+  , unCategoryName
+  , unCategorySubName
   , CategoryType(..)
   , DebitCategory(..)
   , CreditCategory(..)
