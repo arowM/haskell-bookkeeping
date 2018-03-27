@@ -37,7 +37,7 @@ module Business.Bookkeeping
   , YearTransactions
   , MonthTransactions
   , DateTransactions
-  , Transaction(..)
+  , Journal(..)
   , Year
   , Month
   , Date
@@ -56,9 +56,6 @@ module Business.Bookkeeping
   , CreditCategory(..)
   ) where
 
-import Control.Monad.State (State, execState, modify)
-import qualified Data.DList as DList
-import Data.DList (DList)
 import Data.Monoid ((<>))
 import qualified Data.Semigroup as Sem
 import Data.String (IsString(..))
@@ -66,6 +63,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import Data.Time.Calendar (Day, fromGregorian)
+import Data.Transaction (Transaction, action, tMap, toList)
 
 {- $setup
 >>> :{
@@ -90,20 +88,16 @@ let
 {-| Convert from 'YearTransactions' to 'Transactions'.
 -}
 year :: Year -> YearTransactions -> Transactions
-year y =
-  modify . flip mappend . fmap ($ y) . toDList
+year y = tMap ($ y)
 
-{-| Convert from 'MonthTransactions' to 'YearTransactions'.
--}
+{-| Convert from 'MonthTransactions' to 'YearTransactions'.  -}
 month :: Month -> MonthTransactions -> YearTransactions
-month m =
-  modify . flip mappend . fmap ($ m) . toDList
+month m = tMap ($ m)
 
 {-| Convert from 'DateTransactions' to 'MonthTransactions'.
 -}
 activity :: Date -> Description -> DateTransactions -> MonthTransactions
-activity d desc =
-  modify . flip mappend . fmap (($ desc) . ($ d)) . toDList
+activity d desc = tMap (($ desc) . ($ d))
 
 dateTrans :: DebitCategory
           -> CreditCategory
@@ -111,8 +105,8 @@ dateTrans :: DebitCategory
           -> Amount
           -> DateTransactions
 dateTrans debit credit subdesc amount =
-  modify . flip mappend . DList.singleton $ \d desc m y ->
-    Transaction
+  action $ \d desc m y ->
+    Journal
     { tDay = fromGregorian (unYear y) (unMonth m) (unDate d)
     , tDescription = desc
     , tSubDescription = subdesc
@@ -121,13 +115,10 @@ dateTrans debit credit subdesc amount =
     , tAmount = amount
     }
 
-{-| Take list of `Transaction` out from 'Transactions'.
+{-| Take list of `Journal` out from 'Transactions'.
 -}
-runTransactions :: Transactions -> [Transaction]
-runTransactions = DList.toList . toDList
-
-toDList :: Trans a -> DList a
-toDList ts = execState ts mempty
+runTransactions :: Transactions -> [Journal]
+runTransactions = toList
 
 {-| A pretty printer for `Transactions`.
 
@@ -164,8 +155,8 @@ tAmount: 3000
 ppr :: Transactions -> IO ()
 ppr = T.putStr . T.unlines . map format . runTransactions
   where
-    format :: Transaction -> T.Text
-    format Transaction {..} =
+    format :: Journal -> T.Text
+    format Journal {..} =
       T.unlines
         [ "tDay: " <> (T.pack . show) tDay
         , "tDescription: " <> unDescription tDescription
@@ -196,21 +187,17 @@ ppr = T.putStr . T.unlines . map format . runTransactions
  -     Types
  - ============== -}
 
-type Trans a = State (DList a) ()
+type Transactions = Transaction Journal
 
-{-| A type for handling `Transaction` values.
- -}
-type Transactions = Trans Transaction
+type YearTransactions = Transaction (Year -> Journal)
 
-type YearTransactions = Trans (Year -> Transaction)
+type MonthTransactions = Transaction (Month -> Year -> Journal)
 
-type MonthTransactions = Trans (Month -> Year -> Transaction)
-
-type DateTransactions = Trans (Date -> Description -> Month -> Year -> Transaction)
+type DateTransactions = Transaction (Date -> Description -> Month -> Year -> Journal)
 
 {-| A type representing a transaction.
  -}
-data Transaction = Transaction
+data Journal = Journal
   { tDay :: Day
   , tDescription :: Description
   , tSubDescription :: SubDescription
